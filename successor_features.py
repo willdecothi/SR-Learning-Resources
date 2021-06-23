@@ -3,6 +3,7 @@ import numpy.matlib
 import cv2 as cv
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+from scipy.ndimage import gaussian_filter
 
 
 class BVC:
@@ -346,6 +347,7 @@ def calculate_successor_features(basis_cells, M, threshold=True):
     """    
     print('')
     print('Calculating successor features')
+    smoothing_sigma = 3
     successor_features = []
     for i in tqdm(np.arange(len(basis_cells))):
         # initialise successor feature
@@ -358,6 +360,7 @@ def calculate_successor_features(basis_cells, M, threshold=True):
             c.rate_map += basis_cells[j].rate_map * c.weights[j]
         # normalize and threshold maps
         c.rate_map = c.rate_map / np.amax(c.rate_map)
+        c.rate_map = gaussian_filter(c.rate_map, smoothing_sigma)
         if threshold == True:
             c.rate_map = np.maximum(c.rate_map - 0.8, 0)
         successor_features.append(c)
@@ -376,6 +379,7 @@ def calculate_successor_eigenvectors(basis_cells, M, threshold=True):
     """    
     print('')
     print('Calculating successor eigenvectors')
+    smoothing_sigma = 3
     successor_eigenvectors = []
     for i in tqdm(np.arange(len(basis_cells))):
         # initialise successor eigenvector
@@ -389,6 +393,7 @@ def calculate_successor_eigenvectors(basis_cells, M, threshold=True):
             c.rate_map += basis_cells[j].rate_map * c.weights[j]
         # normalize and threshold maps
         c.rate_map = c.rate_map / np.amax(c.rate_map)
+        c.rate_map = gaussian_filter(c.rate_map, smoothing_sigma)
         if threshold == True:
             c.rate_map = np.maximum(c.rate_map, 0)
         successor_eigenvectors.append(c)
