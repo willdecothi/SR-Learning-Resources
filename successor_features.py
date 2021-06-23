@@ -37,10 +37,19 @@ class Environment:
 
         Args:
             enclosure_type (string): One of the enclosure_types listed below
-        """        
-        grid_map = np.zeros([200, 200, 3], np.uint8)
+        """
+        if enclosure_type == 'small_square':
+            grid_map = np.zeros([100, 100, 3], np.uint8)
+            walls = [((0,0),(0,100)),((0,100),(100,100)),((100,0),(100,100)),((0,0),(100,0))]
+            for wall in walls:
+                wall_start, wall_end = wall
+                cv.line(grid_map, wall_start, wall_end,(0,255,0),1)
+            grid_map = grid_map[:, :, 1].astype('bool')
+            self.map =  grid_map
+            self.walls = walls
 
-        if enclosure_type == 'square':
+        elif enclosure_type == 'square':
+            grid_map = np.zeros([200, 200, 3], np.uint8)
             walls = [((0,0),(0,200)),((0,200),(200,200)),((200,0),(200,200)),((0,0),(200,0))]
             for wall in walls:
                 wall_start, wall_end = wall
@@ -50,6 +59,7 @@ class Environment:
             self.walls = walls
 
         elif enclosure_type == 'barrier':
+            grid_map = np.zeros([200, 200, 3], np.uint8)
             walls = [((0,0),(0,200)),((0,200),(200,200)),((200,0),(200,200)),((0,0),(200,0)),
     		((100,0),(100,100))]
             for wall in walls:
@@ -60,6 +70,7 @@ class Environment:
             self.walls = walls
 
         elif enclosure_type == 'four_rooms':
+            grid_map = np.zeros([200, 200, 3], np.uint8)
             walls = [((0,0),(0,200)),((0,200),(200,200)),((200,0),(200,200)),((0,0),(200,0)),
     		((100,60),(100,140)),((60,100),(140,100)),
     		((100,0),(100,40)),((100,160),(100,200)),((0,100),(40,100)),((160,100),(200,100))]
