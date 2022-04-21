@@ -1,6 +1,5 @@
 import numpy as np
 import numpy.matlib 
-import cv2 as cv
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
@@ -42,9 +41,6 @@ class Environment:
         if enclosure_type == 'small_square':
             grid_map = np.zeros([100, 100, 3], np.uint8)
             walls = [((0,0),(0,100)),((0,100),(100,100)),((100,0),(100,100)),((0,0),(100,0))]
-            for wall in walls:
-                wall_start, wall_end = wall
-                cv.line(grid_map, wall_start, wall_end,(0,255,0),1)
             grid_map = grid_map[:, :, 1].astype('bool')
             self.map =  grid_map
             self.walls = walls
@@ -52,9 +48,6 @@ class Environment:
         elif enclosure_type == 'square':
             grid_map = np.zeros([200, 200, 3], np.uint8)
             walls = [((0,0),(0,200)),((0,200),(200,200)),((200,0),(200,200)),((0,0),(200,0))]
-            for wall in walls:
-                wall_start, wall_end = wall
-                cv.line(grid_map, wall_start, wall_end,(0,255,0),1)
             grid_map = grid_map[:, :, 1].astype('bool')
             self.map =  grid_map
             self.walls = walls
@@ -63,9 +56,6 @@ class Environment:
             grid_map = np.zeros([200, 200, 3], np.uint8)
             walls = [((0,0),(0,200)),((0,200),(200,200)),((200,0),(200,200)),((0,0),(200,0)),
     		((100,0),(100,100))]
-            for wall in walls:
-                wall_start, wall_end = wall
-                cv.line(grid_map, wall_start, wall_end,(0,255,0),1)
             grid_map = grid_map[:, :, 1].astype('bool')
             self.map =  grid_map
             self.walls = walls
@@ -75,14 +65,20 @@ class Environment:
             walls = [((0,0),(0,200)),((0,200),(200,200)),((200,0),(200,200)),((0,0),(200,0)),
     		((100,60),(100,140)),((60,100),(140,100)),
     		((100,0),(100,40)),((100,160),(100,200)),((0,100),(40,100)),((160,100),(200,100))]
-            for wall in walls:
-                wall_start, wall_end = wall
-                cv.line(grid_map, wall_start, wall_end,(0,255,0),1)
             grid_map = grid_map[:, :, 1].astype('bool')
             self.map =  grid_map
             self.walls = walls
         else:
             print('Please select existing enclosure.')
+
+    def plot_environment(self):
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set_aspect('equal')
+        ax.set_title('Environment')
+        for wall in self.walls:
+            (wall_start_x,wall_start_y), (wall_end_x,wall_end_y) = wall
+            ax.plot([wall_start_x,wall_end_x], [wall_start_y,wall_end_y],'k')
 
     def generate_trajectory(self, n_samples):
         """Generates a random walk according to Raudies and Hasselmo (2012) Figure 2
@@ -421,8 +417,6 @@ def plot_cells(cells, n=10, m=16, cell_type = ''):
         ax.set_yticklabels([])
         ax.set_title(cell_type+str(i+1))
     plt.subplots_adjust(hspace=0.5,wspace=0.3)
-    plt.show()
-    return fig
 
 def wrapTo2Pi_element(angle):
     '''
